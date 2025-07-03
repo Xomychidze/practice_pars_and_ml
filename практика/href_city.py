@@ -4,6 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 import practice as pr
+from image_delete import delete_image
 
 def get_html(url):
     r = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -78,6 +79,7 @@ def main():
         if ans == 1:
             new_write_csv()
             pr.new_write_csv()
+            delete_image()
         else:
             print("Okay")
     except ValueError:

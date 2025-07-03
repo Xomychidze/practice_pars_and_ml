@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import csv
+from request_test import get_image
 
 def get_html(url):
     r = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -30,7 +31,7 @@ def write_csv_row(row):
         writer = csv.writer(f)
         writer.writerow([row[0], row[1], row[2], row[3], row[4], row[5]])
 
-def get_href_data(html, slug):
+def get_href_data(html, slug, src : str):
     soup = BeautifulSoup(html, "lxml")
     data = []
     
@@ -50,6 +51,7 @@ def get_href_data(html, slug):
         
         data = [title, price, category, partner, date, slug]
         write_csv_row(data)
+        get_image(src, title)
         return f"{title} | {price} ₸ | {category} | {partner} | {date} | {slug}"
     except Exception as e:
         print(f"Error processing data: {str(e)}")
@@ -68,10 +70,12 @@ def get_data(html, slug):
 
     for card in cards:
         a_tag = card.find("a")
+        img = a_tag.find("img")
+        src = img.get("src")
         href = a_tag.get("href")
         if href:
             data_page = get_href(href)
-            need_data = get_href_data(data_page, slug)
+            need_data = get_href_data(data_page, slug, src)
             data.append(need_data)
 
     return data
